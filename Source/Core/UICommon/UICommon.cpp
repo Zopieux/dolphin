@@ -22,6 +22,11 @@
 
 namespace UICommon
 {
+const char *URL_DOWNLOAD = "https://dolphin-emu.org/download";
+const char *URL_DOWNLOAD_TEXT = "dolphin-emu.org/download";
+const char *URL_LICENSE = "https://github.com/dolphin-emu/dolphin/blob/master/license.txt";
+const char *URL_AUTHORS = "https://github.com/dolphin-emu/dolphin/graphs/contributors";
+const char *URL_SUPPORT = "https://forums.dolphin-emu.org/";
 
 void Init()
 {

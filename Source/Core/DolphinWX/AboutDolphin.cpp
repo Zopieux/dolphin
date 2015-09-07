@@ -19,6 +19,7 @@
 #include "Common/Common.h"
 #include "DolphinWX/AboutDolphin.h"
 #include "DolphinWX/resources/dolphin_logo.cpp"
+#include "UICommon/UICommon.h"
 
 AboutDolphin::AboutDolphin(wxWindow *parent, wxWindowID id,
 		const wxString &title, const wxPoint &position,
@@ -70,10 +71,10 @@ AboutDolphin::AboutDolphin(wxWindow *parent, wxWindowID id,
 	wxStaticText* const UpdateText = new wxStaticText(this, wxID_ANY, CheckUpdateText);
 	wxStaticText* const FirstSpacer = new wxStaticText(this, wxID_ANY, "  |  ");
 	wxStaticText* const SecondSpacer = new wxStaticText(this, wxID_ANY, "  |  ");
-	wxHyperlinkCtrl* const Download = new wxHyperlinkCtrl(this, wxID_ANY, "dolphin-emu.org/download", "https://dolphin-emu.org/download/");
-	wxHyperlinkCtrl* const License = new wxHyperlinkCtrl(this, wxID_ANY, LicenseText, "https://github.com/dolphin-emu/dolphin/blob/master/license.txt");
-	wxHyperlinkCtrl* const Authors = new wxHyperlinkCtrl(this, wxID_ANY, AuthorsText, "https://github.com/dolphin-emu/dolphin/graphs/contributors");
-	wxHyperlinkCtrl* const Support = new wxHyperlinkCtrl(this, wxID_ANY, SupportText, "https://forums.dolphin-emu.org/");
+	wxHyperlinkCtrl* const Download = new wxHyperlinkCtrl(this, wxID_ANY, UICommon::URL_DOWNLOAD_TEXT, UICommon::URL_DOWNLOAD);
+	wxHyperlinkCtrl* const License = new wxHyperlinkCtrl(this, wxID_ANY, LicenseText, UICommon::URL_LICENSE);
+	wxHyperlinkCtrl* const Authors = new wxHyperlinkCtrl(this, wxID_ANY, AuthorsText, UICommon::URL_AUTHORS);
+	wxHyperlinkCtrl* const Support = new wxHyperlinkCtrl(this, wxID_ANY, SupportText, UICommon::URL_SUPPORT);
 
 	wxFont DolphinFont = Dolphin->GetFont();
 	wxFont RevisionFont = Revision->GetFont();

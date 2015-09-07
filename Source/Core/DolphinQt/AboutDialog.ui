@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>535</width>
+    <width>680</width>
     <height>273</height>
    </rect>
   </property>
@@ -23,7 +23,7 @@
    <item row="5" column="1">
     <widget class="QLabel" name="lblLicenseAuthorsSupport">
      <property name="text">
-      <string>&lt;a href=&quot;https://github.com/dolphin-emu/dolphin/blob/master/license.txt&quot;&gt;License&lt;/a&gt; | &lt;a href=&quot;https://github.com/dolphin-emu/dolphin/graphs/contributors&quot;&gt;Authors&lt;/a&gt; | &lt;a href=&quot;https://forums.dolphin-emu.org/&quot;&gt;Support&lt;/a&gt;</string>
+      <string>&lt;a href=&quot;%1&quot;&gt;License&lt;/a&gt; | &lt;a href=&quot;%2&quot;&gt;Authors&lt;/a&gt; | &lt;a href=&quot;%3&quot;&gt;Support&lt;/a&gt;</string>
      </property>
      <property name="textFormat">
       <enum>Qt::RichText</enum>
@@ -61,15 +61,21 @@ Compiled: %3 @ %4</string>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="margin">
+      <number>10</number>
+     </property>
     </widget>
    </item>
    <item row="3" column="1">
     <widget class="QLabel" name="lblChkForUpdates">
      <property name="text">
-      <string>Check for updates: &lt;a href=&quot;https://dolphin-emu.org/download&quot;&gt;dolphin-emu.org/download&lt;/a&gt;</string>
+      <string>Check for updates: &lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;</string>
      </property>
      <property name="textFormat">
       <enum>Qt::RichText</enum>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
      </property>
      <property name="openExternalLinks">
       <bool>true</bool>
@@ -109,6 +115,9 @@ Compiled: %3 @ %4</string>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
      </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
    <item row="1" column="1">
@@ -139,6 +148,9 @@ This software should not be used to play games you do not legally own.</string>
      </property>
      <property name="textFormat">
       <enum>Qt::PlainText</enum>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
