@@ -49,8 +49,8 @@
     <property name="title">
      <string>E&amp;mulation</string>
     </property>
-    <addaction name="actionPlay_mnu"/>
-    <addaction name="actionStop_mnu"/>
+    <addaction name="actionPlay"/>
+    <addaction name="actionStop"/>
     <addaction name="actionReset"/>
    </widget>
    <widget class="QMenu" name="mnuOptions">
@@ -114,8 +114,11 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionPlay"/>
-   <addaction name="actionStop"/>
+   <addaction name="actionOpen_tool"/>
+   <addaction name="actionBrowse_tool"/>
+   <addaction name="separator"/>
+   <addaction name="actionPlay_tool"/>
+   <addaction name="actionStop_tool"/>
   </widget>
   <action name="actionWebsite">
    <property name="text">
@@ -156,12 +159,12 @@
     <string>&amp;System Information</string>
    </property>
   </action>
-  <action name="actionPlay">
+  <action name="actionPlay_tool">
    <property name="text">
     <string>Play</string>
    </property>
   </action>
-  <action name="actionStop">
+  <action name="actionStop_tool">
    <property name="text">
     <string>Stop</string>
    </property>
@@ -215,8 +218,11 @@
    <property name="text">
     <string>Exit</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
   </action>
-  <action name="actionPlay_mnu">
+  <action name="actionPlay">
    <property name="text">
     <string>&amp;Play</string>
    </property>
@@ -224,7 +230,7 @@
     <string>F10</string>
    </property>
   </action>
-  <action name="actionStop_mnu">
+  <action name="actionStop">
    <property name="text">
     <string>&amp;Stop</string>
    </property>
@@ -235,6 +241,22 @@
   <action name="actionReset">
    <property name="text">
     <string>&amp;Reset</string>
+   </property>
+  </action>
+  <action name="actionOpen_tool">
+   <property name="text">
+    <string>Open</string>
+   </property>
+   <property name="toolTip">
+    <string>Open file...</string>
+   </property>
+  </action>
+  <action name="actionBrowse_tool">
+   <property name="text">
+    <string>Browse</string>
+   </property>
+   <property name="toolTip">
+    <string>Browse for an ISO directory...</string>
    </property>
   </action>
  </widget>

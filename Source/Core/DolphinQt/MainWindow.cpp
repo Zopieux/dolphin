@@ -58,7 +58,9 @@ DMainWindow::DMainWindow(QWidget* parent_widget)
 	connect(this, SIGNAL(CoreStateChanged(Core::EState)), this, SLOT(OnCoreStateChanged(Core::EState)));
 
 	connect(m_ui->actionOpen, SIGNAL(triggered()), this, SLOT(OnOpen()));
+	connect(m_ui->actionOpen_tool, SIGNAL(triggered()), this, SLOT(OnOpen()));
 	connect(m_ui->actionBrowse, SIGNAL(triggered()), this, SLOT(OnBrowse()));
+	connect(m_ui->actionBrowse_tool, SIGNAL(triggered()), this, SLOT(OnBrowse()));
 	connect(m_ui->actionExit, SIGNAL(triggered()), this, SLOT(OnExit()));
 
 	connect(m_ui->actionListView, SIGNAL(triggered()), this, SLOT(OnGameListStyleChanged()));
@@ -66,11 +68,11 @@ DMainWindow::DMainWindow(QWidget* parent_widget)
 	connect(m_ui->actionGridView, SIGNAL(triggered()), this, SLOT(OnGameListStyleChanged()));
 	connect(m_ui->actionIconView, SIGNAL(triggered()), this, SLOT(OnGameListStyleChanged()));
 
+	connect(m_ui->actionPlay_tool, SIGNAL(triggered()), this, SLOT(OnPlay()));
 	connect(m_ui->actionPlay, SIGNAL(triggered()), this, SLOT(OnPlay()));
-	connect(m_ui->actionPlay_mnu, SIGNAL(triggered()), this, SLOT(OnPlay()));
 	connect(m_game_tracker, SIGNAL(StartGame()), this, SLOT(OnPlay()));
+	connect(m_ui->actionStop_tool, SIGNAL(triggered()), this, SLOT(OnStop()));
 	connect(m_ui->actionStop, SIGNAL(triggered()), this, SLOT(OnStop()));
-	connect(m_ui->actionStop_mnu, SIGNAL(triggered()), this, SLOT(OnStop()));
 	connect(m_ui->actionReset, SIGNAL(triggered()), this, SLOT(OnReset()));
 
 	connect(m_ui->actionWebsite, SIGNAL(triggered()), this, SLOT(OnOpenWebsite()));
@@ -309,21 +311,21 @@ void DMainWindow::OnCoreStateChanged(Core::EState state)
 	bool is_paused = (state == Core::CORE_PAUSE);
 
 	// Update the toolbar
-	m_ui->actionPlay->setEnabled(is_not_initialized || is_running || is_paused);
+	m_ui->actionPlay_tool->setEnabled(is_not_initialized || is_running || is_paused);
 	if (is_running)
 	{
-		m_ui->actionPlay->setIcon(Resources::GetIcon(Resources::TOOLBAR_PAUSE));
+		m_ui->actionPlay_tool->setIcon(Resources::GetIcon(Resources::TOOLBAR_PAUSE));
+		m_ui->actionPlay_tool->setText(tr("Pause"));
 		m_ui->actionPlay->setText(tr("Pause"));
-		m_ui->actionPlay_mnu->setText(tr("Pause"));
 	}
 	else if (is_paused || is_not_initialized)
 	{
-		m_ui->actionPlay->setIcon(Resources::GetIcon(Resources::TOOLBAR_PLAY));
+		m_ui->actionPlay_tool->setIcon(Resources::GetIcon(Resources::TOOLBAR_PLAY));
+		m_ui->actionPlay_tool->setText(tr("Play"));
 		m_ui->actionPlay->setText(tr("Play"));
-		m_ui->actionPlay_mnu->setText(tr("Play"));
 	}
 
-	m_ui->actionStop->setEnabled(!is_not_initialized);
+	m_ui->actionStop_tool->setEnabled(!is_not_initialized);
 	m_ui->actionOpen->setEnabled(is_not_initialized);
 	m_game_tracker->setEnabled(is_not_initialized);
 }
@@ -332,8 +334,10 @@ void DMainWindow::OnCoreStateChanged(Core::EState state)
 // "Resources". Call this function after changing the icon theme.
 void DMainWindow::UpdateIcons()
 {
+	m_ui->actionOpen_tool->setIcon(Resources::GetIcon(Resources::TOOLBAR_OPEN));
+	m_ui->actionBrowse_tool->setIcon(Resources::GetIcon(Resources::TOOLBAR_BROWSE));
 	// Play/Pause is handled in OnCoreStateChanged().
-	m_ui->actionStop->setIcon(Resources::GetIcon(Resources::TOOLBAR_STOP));
+	m_ui->actionStop_tool->setIcon(Resources::GetIcon(Resources::TOOLBAR_STOP));
 }
 
 // Help menu
