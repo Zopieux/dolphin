@@ -17,6 +17,7 @@
 #include "Core/HW/ProcessorInterface.h"
 
 #include "DolphinQt/AboutDialog.h"
+#include "DolphinQt/Config/ConfigDialog.h"
 #include "DolphinQt/MainWindow.h"
 #include "DolphinQt/SystemInfo.h"
 #include "DolphinQt/Utils/Resources.h"
@@ -74,6 +75,9 @@ DMainWindow::DMainWindow(QWidget* parent_widget)
 	connect(m_ui->actionStop_tool, SIGNAL(triggered()), this, SLOT(OnStop()));
 	connect(m_ui->actionStop, SIGNAL(triggered()), this, SLOT(OnStop()));
 	connect(m_ui->actionReset, SIGNAL(triggered()), this, SLOT(OnReset()));
+
+	connect(m_ui->actionConfigure, SIGNAL(triggered()), this, SLOT(onOpenConfigure()));
+	connect(m_ui->actionConfigure_tool, SIGNAL(triggered()), this, SLOT(onOpenConfigure()));
 
 	connect(m_ui->actionWebsite, SIGNAL(triggered()), this, SLOT(OnOpenWebsite()));
 	connect(m_ui->actionOnlineDocs, SIGNAL(triggered()), this, SLOT(OnOpenDocs()));
@@ -336,6 +340,7 @@ void DMainWindow::UpdateIcons()
 {
 	m_ui->actionOpen_tool->setIcon(Resources::GetIcon(Resources::TOOLBAR_OPEN));
 	m_ui->actionBrowse_tool->setIcon(Resources::GetIcon(Resources::TOOLBAR_BROWSE));
+	m_ui->actionConfigure_tool->setIcon(Resources::GetIcon(Resources::TOOLBAR_CONFIGURE));
 	// Play/Pause is handled in OnCoreStateChanged().
 	m_ui->actionStop_tool->setIcon(Resources::GetIcon(Resources::TOOLBAR_STOP));
 }
@@ -371,4 +376,10 @@ void DMainWindow::OnOpenAbout()
 void DMainWindow::OnOpenAboutQt()
 {
 	QApplication::aboutQt();
+}
+
+void DMainWindow::onOpenConfigure()
+{
+	DConfigDialog* dlg = new DConfigDialog(this);
+	dlg->open();
 }

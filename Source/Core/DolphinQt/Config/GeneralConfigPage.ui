@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DGeneralConfigPage</class>
+ <widget class="QWidget" name="DGeneralConfigPage">
+  <layout class="QVBoxLayout" name="layoutMain">
+   <item>
+    <widget class="QGroupBox" name="groupBasicSettings">
+     <property name="title">
+      <string>Basic Settings</string>
+     </property>
+     <layout class="QVBoxLayout" name="layoutBasicSettings">
+      <item>
+       <widget class="QCheckBox" name="chkEnableDualCore">
+        <property name="text">
+         <string>Enable Dual Core (speedup)</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="chkEnableSkipIdle">
+        <property name="text">
+         <string>Enable Idle Skipping (speedup)</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="chkEnableCheats">
+        <property name="text">
+         <string>Enable Cheats (speedup)</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="layoutFrameLimit">
+        <item>
+         <widget class="QLabel" name="lblFrameLimit">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Framelimit:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="comboFrameLimit"/>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupAdvancedSettings">
+     <property name="title">
+      <string>Advanced Settings</string>
+     </property>
+     <layout class="QVBoxLayout" name="layoutAdvancedSettings">
+      <item>
+       <widget class="QGroupBox" name="groupCpuEmulatorEngine">
+        <property name="title">
+         <string>CPU Emulator Engine</string>
+        </property>
+        <layout class="QVBoxLayout" name="layoutCpuEmulatorEngine"/>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="chkForceNTSCJ">
+        <property name="text">
+         <string>Force Console as NTSC-J</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

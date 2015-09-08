@@ -57,6 +57,7 @@
     <property name="title">
      <string>Optio&amp;ns</string>
     </property>
+    <addaction name="actionConfigure"/>
    </widget>
    <widget class="QMenu" name="mnuTools">
     <property name="title">
@@ -119,6 +120,8 @@
    <addaction name="separator"/>
    <addaction name="actionPlay_tool"/>
    <addaction name="actionStop_tool"/>
+   <addaction name="separator"/>
+   <addaction name="actionConfigure_tool"/>
   </widget>
   <action name="actionWebsite">
    <property name="text">
@@ -257,6 +260,19 @@
    </property>
    <property name="toolTip">
     <string>Browse for an ISO directory...</string>
+   </property>
+  </action>
+  <action name="actionConfigure">
+   <property name="text">
+    <string>Co&amp;nfigure...</string>
+   </property>
+  </action>
+  <action name="actionConfigure_tool">
+   <property name="text">
+    <string>Config</string>
+   </property>
+   <property name="toolTip">
+    <string>Configure...</string>
    </property>
   </action>
  </widget>

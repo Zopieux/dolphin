@@ -12,6 +12,9 @@ set(SRCS
 	MainWindow.cpp
 	MainWindow.h
 	SystemInfo.cpp
+	Config/ConfigPage.h
+	Config/ConfigDialog.cpp
+	Config/GeneralConfigPage.cpp
 	GameList/GameFile.cpp
 	GameList/GameGrid.cpp
 	GameList/GameTracker.cpp
@@ -25,6 +28,8 @@ set(UIS
 	AboutDialog.ui
 	MainWindow.ui
 	SystemInfo.ui
+	Config/ConfigDialog.ui
+	Config/GeneralConfigPage.ui
 	GameList/GameGrid.ui
 	GameList/GameTree.ui
 	)

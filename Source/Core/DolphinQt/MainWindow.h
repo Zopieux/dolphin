@@ -52,6 +52,9 @@ private slots:
 	// View menu
 	void OnGameListStyleChanged();
 
+	// Options menu
+	void onOpenConfigure();
+
 	// Help menu
 	void OnOpenWebsite();
 	void OnOpenDocs();
