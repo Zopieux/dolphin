@@ -6,7 +6,7 @@
 
 namespace UICommon
 {
-extern const char *URL_DOWNLOAD, *URL_DOWNLOAD_TEXT, *URL_LICENSE, *URL_AUTHORS, *URL_SUPPORT;
+extern const char* URL_DOWNLOAD,* URL_DOWNLOAD_TEXT,* URL_LICENSE,* URL_AUTHORS,* URL_SUPPORT;
 
 void Init();
 void Shutdown();
