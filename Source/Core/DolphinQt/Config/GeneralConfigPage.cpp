@@ -45,6 +45,9 @@ DGeneralConfigPage::DGeneralConfigPage(QWidget* parent_widget)
 	for (int i = 5; i <= 120; i += 5) // from 5 to 120
 		m_ui->comboFrameLimit->addItem(QString::number(i));
 
+	LoadFromConfig();
+	Refresh();
+
 	// Connect signals
 	connect(m_ui->chkEnableDualCore, SIGNAL(toggled(bool)),
 		this, SLOT(OnEnableDualCoreCheckBoxToggled(bool)));
@@ -56,9 +59,6 @@ DGeneralConfigPage::DGeneralConfigPage(QWidget* parent_widget)
 		this, SLOT(OnForceNTSCJCheckBoxToggled(bool)));
 	connect(m_ui->comboFrameLimit, SIGNAL(currentIndexChanged(int)),
 		this, SLOT(OnFrameLimitIndexChanged(int)));
-
-	LoadFromConfig();
-	Refresh();
 }
 
 DGeneralConfigPage::~DGeneralConfigPage()

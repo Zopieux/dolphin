@@ -15,6 +15,7 @@ set(SRCS
 	Config/ConfigPage.h
 	Config/ConfigDialog.cpp
 	Config/GeneralConfigPage.cpp
+	Config/InterfaceConfigPage.cpp
 	GameList/GameFile.cpp
 	GameList/GameGrid.cpp
 	GameList/GameTracker.cpp
@@ -30,6 +31,7 @@ set(UIS
 	SystemInfo.ui
 	Config/ConfigDialog.ui
 	Config/GeneralConfigPage.ui
+	Config/InterfaceConfigPage.ui
 	GameList/GameGrid.ui
 	GameList/GameTree.ui
 	)

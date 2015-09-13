@@ -151,6 +151,7 @@ void SConfig::SaveInterfaceSettings(IniFile& ini)
 	interface->Set("MainWindowWidth", iWidth);
 	interface->Set("MainWindowHeight", iHeight);
 	interface->Set("Language", m_InterfaceLanguage);
+	interface->Set("QtLanguage", m_QtInterfaceLanguage);
 	interface->Set("ShowToolbar", m_InterfaceToolbar);
 	interface->Set("ShowStatusbar", m_InterfaceStatusbar);
 	interface->Set("ShowLogWindow", m_InterfaceLogWindow);
@@ -395,6 +396,7 @@ void SConfig::LoadInterfaceSettings(IniFile& ini)
 	interface->Get("MainWindowWidth",         &iWidth,            800);
 	interface->Get("MainWindowHeight",        &iHeight,           600);
 	interface->Get("Language",                &m_InterfaceLanguage,                           0);
+	interface->Get("QtLanguage",              &m_QtInterfaceLanguage,                         0);
 	interface->Get("ShowToolbar",             &m_InterfaceToolbar,                            true);
 	interface->Get("ShowStatusbar",           &m_InterfaceStatusbar,                          true);
 	interface->Get("ShowLogWindow",           &m_InterfaceLogWindow,                          false);

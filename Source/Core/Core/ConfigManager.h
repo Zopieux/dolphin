@@ -194,6 +194,7 @@ struct SConfig : NonCopyable
 
 	// interface language
 	int m_InterfaceLanguage;
+	int m_QtInterfaceLanguage;
 	// framelimit choose
 	unsigned int m_Framelimit;
 	bool m_OCEnable;

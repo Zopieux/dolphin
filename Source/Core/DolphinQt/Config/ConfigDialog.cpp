@@ -9,6 +9,7 @@
 
 #include "DolphinQt/Config/ConfigDialog.h"
 #include "DolphinQt/Config/GeneralConfigPage.h"
+#include "DolphinQt/Config/InterfaceConfigPage.h"
 #include "DolphinQt/Utils/Resources.h"
 
 DConfigDialog::DConfigDialog(QWidget* parent_widget)
@@ -22,7 +23,9 @@ DConfigDialog::DConfigDialog(QWidget* parent_widget)
 	m_ui->setupUi(this);
 
 	DGeneralConfigPage* const general_page = new DGeneralConfigPage(this);
+	DInterfaceConfigPage* const interface_page = new DInterfaceConfigPage(this);
 	m_ui->confWidget->addTab(general_page, tr("General"));
+	m_ui->confWidget->addTab(interface_page, tr("Interface"));
 }
 
 DConfigDialog::~DConfigDialog()

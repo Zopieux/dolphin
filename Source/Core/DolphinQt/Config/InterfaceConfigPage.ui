@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DInterfaceConfigPage</class>
+ <widget class="QWidget" name="DInterfaceConfigPage">
+  <layout class="QVBoxLayout" name="layoutMain">
+   <item>
+    <widget class="QGroupBox" name="groupBasicSettings">
+     <property name="title">
+      <string>Interface Settings</string>
+     </property>
+     <layout class="QVBoxLayout" name="layoutBasicSettings">
+      <item>
+       <widget class="QCheckBox" name="chkConfirmStop">
+        <property name="text">
+         <string>Confirm on stop</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="chkUsePanicHandlers">
+        <property name="text">
+         <string>Use Panic Handlers</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="chkOnScreenDisplayMessages">
+        <property name="text">
+         <string>On-Screen Display Messages</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="chkPauseOnFocusLost">
+        <property name="text">
+         <string>Pause on Focus Lost</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <widget class="QLabel" name="lblFrameLimit">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Theme:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QComboBox" name="comboTheme"/>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="lblFrameLimit_2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Language:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QComboBox" name="comboLanguage"/>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
