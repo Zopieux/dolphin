@@ -2,6 +2,10 @@
 // Licensed under GPLv2+
 // Refer to the license.txt file included.
 
+#include <QtWidgets/QCheckBox>
+#include <QtWidgets/QRadioButton>
+#include <QtWidgets/QComboBox>
+
 #include "ui_GeneralConfigPage.h"
 
 #include "Common/Common.h"
@@ -33,7 +37,20 @@ DGeneralConfigPage::DGeneralConfigPage(QWidget* parent_widget)
 	for (const CPUCore& cpu_core : m_cpu_cores)
 	{
 		QRadioButton* check_box = new QRadioButton(cpu_core.name, m_ui->groupCpuEmulatorEngine);
-		connect(check_box, SIGNAL(toggled(bool)), this, SLOT(OnCPUEngineRadioToggled(bool)));
+		connect(check_box, &QRadioButton::toggled, [check_box, this](bool checked) {
+			if (!checked)
+				return;
+			// TODO
+			/*
+			if (main_frame->g_pCodeWindow)
+			{
+				bool using_interp = (SConfig::GetInstance().iCPUCore == PowerPC::CORE_INTERPRETER);
+				main_frame->g_pCodeWindow->GetMenuBar()->Check(IDM_INTERPRETER, using_interp);
+			}
+			*/
+			const int index = m_cpu_cores_radios.indexOf(check_box);
+			SConfig::GetInstance().iCPUCore = m_cpu_cores[index].CPUid;
+		});
 		m_ui->layoutCpuEmulatorEngine->addWidget(check_box);
 		m_cpu_cores_radios.append(check_box);
 	}
@@ -48,16 +65,25 @@ DGeneralConfigPage::DGeneralConfigPage(QWidget* parent_widget)
 	Refresh();
 
 	// Connect signals
-	connect(m_ui->chkEnableDualCore, SIGNAL(toggled(bool)),
-		this, SLOT(OnEnableDualCoreCheckBoxToggled(bool)));
-	connect(m_ui->chkEnableSkipIdle, SIGNAL(toggled(bool)),
-		this, SLOT(OnEnableSkipIdleCheckBoxToggled(bool)));
-	connect(m_ui->chkEnableCheats, SIGNAL(toggled(bool)),
-		this, SLOT(OnEnableCheatsCheckBoxToggled(bool)));
-	connect(m_ui->chkForceNTSCJ, SIGNAL(toggled(bool)),
-		this, SLOT(OnForceNTSCJCheckBoxToggled(bool)));
-	connect(m_ui->comboFrameLimit, SIGNAL(currentIndexChanged(int)),
-		this, SLOT(OnFrameLimitIndexChanged(int)));
+	connect(m_ui->chkEnableDualCore, &QCheckBox::toggled, [](bool checked) {
+        if (!Core::IsRunning())
+            SConfig::GetInstance().bCPUThread = checked;
+	});
+	connect(m_ui->chkEnableSkipIdle, &QCheckBox::toggled, [](bool checked) {
+		SConfig::GetInstance().bSkipIdle = checked;
+	});
+	connect(m_ui->chkEnableCheats, &QCheckBox::toggled, [](bool checked) {
+		SConfig::GetInstance().bEnableCheats = checked;
+	});
+	connect(m_ui->chkForceNTSCJ, &QCheckBox::toggled, [](bool checked) {
+		SConfig::GetInstance().bForceNTSCJ = checked;
+	});
+	connect(m_ui->comboFrameLimit, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [](int index) {
+		if (index < 0)
+			return;
+		unsigned int u_index = index;
+		SConfig::GetInstance().m_Framelimit = u_index;
+	});
 }
 
 DGeneralConfigPage::~DGeneralConfigPage()
@@ -93,53 +119,4 @@ void DGeneralConfigPage::Refresh()
 		m_ui->chkForceNTSCJ->setEnabled(false);
 		m_ui->groupCpuEmulatorEngine->setEnabled(false);
 	}
-}
-
-void DGeneralConfigPage::OnEnableDualCoreCheckBoxToggled(bool checked)
-{
-	if (Core::IsRunning())
-		return;
-
-	SConfig::GetInstance().bCPUThread = checked;
-}
-
-void DGeneralConfigPage::OnEnableSkipIdleCheckBoxToggled(bool checked)
-{
-	SConfig::GetInstance().bSkipIdle = checked;
-}
-
-void DGeneralConfigPage::OnEnableCheatsCheckBoxToggled(bool checked)
-{
-	SConfig::GetInstance().bEnableCheats = checked;
-}
-
-void DGeneralConfigPage::OnForceNTSCJCheckBoxToggled(bool checked)
-{
-	SConfig::GetInstance().bForceNTSCJ = checked;
-}
-
-void DGeneralConfigPage::OnFrameLimitIndexChanged(int index)
-{
-	if (index < 0)
-		return;
-	unsigned int u_index = index;
-	SConfig::GetInstance().m_Framelimit = u_index;
-}
-
-void DGeneralConfigPage::OnCPUEngineRadioToggled(bool checked)
-{
-	if (!checked)
-		return;
-
-	// TODO
-	/*
-	if (main_frame->g_pCodeWindow)
-	{
-		bool using_interp = (SConfig::GetInstance().iCPUCore == PowerPC::CORE_INTERPRETER);
-		main_frame->g_pCodeWindow->GetMenuBar()->Check(IDM_INTERPRETER, using_interp);
-	}
-	*/
-
-	const int index = m_cpu_cores_radios.indexOf((QRadioButton*) sender());
-	SConfig::GetInstance().iCPUCore = m_cpu_cores[index].CPUid;
 }

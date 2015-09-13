@@ -37,12 +37,4 @@ private:
 	std::vector<CPUCore> m_cpu_cores;
 	QVector<QRadioButton*> m_cpu_cores_radios;
 	std::unique_ptr<Ui::DGeneralConfigPage> m_ui;
-
-private slots:
-	void OnEnableDualCoreCheckBoxToggled(bool checked);
-	void OnEnableSkipIdleCheckBoxToggled(bool checked);
-	void OnEnableCheatsCheckBoxToggled(bool checked);
-	void OnForceNTSCJCheckBoxToggled(bool checked);
-	void OnFrameLimitIndexChanged(int index);
-	void OnCPUEngineRadioToggled(bool checked);
 };

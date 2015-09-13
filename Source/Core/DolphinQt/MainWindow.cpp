@@ -64,9 +64,9 @@ DMainWindow::DMainWindow(QWidget* parent_widget)
 		if (!filename.isNull())
 			StartGame(filename);
 	});
-	connect(m_ui->actionOpen_tool, SIGNAL(triggered()), m_ui->actionOpen, SLOT(trigger()));
+	connect(m_ui->actionOpen_tool, &QAction::triggered, m_ui->actionOpen, &QAction::trigger);
 	connect(m_ui->actionBrowse, &QAction::triggered, this, &DMainWindow::OnBrowse);
-	connect(m_ui->actionBrowse_tool, SIGNAL(triggered()), m_ui->actionBrowse, SLOT(trigger()));
+	connect(m_ui->actionBrowse_tool, &QAction::triggered, m_ui->actionBrowse, &QAction::trigger);
 	connect(m_ui->actionExit, &QAction::triggered, this, [&]() {
 		close();
 	});
@@ -104,7 +104,7 @@ DMainWindow::DMainWindow(QWidget* parent_widget)
 		DConfigDialog* dlg = new DConfigDialog(this);
 		dlg->open();
 	});
-	connect(m_ui->actionConfigure_tool, SIGNAL(triggered()), m_ui->actionConfigure, SLOT(trigger()));
+	connect(m_ui->actionConfigure_tool, &QAction::triggered, m_ui->actionConfigure, &QAction::trigger);
 	connect(m_ui->actionAboutQt, &QAction::triggered, this, [&]() {
 		QApplication::aboutQt();
 	});

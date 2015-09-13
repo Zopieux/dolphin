@@ -32,12 +32,4 @@ private:
 	QStringList m_languages;
 	std::unique_ptr<Ui::DInterfaceConfigPage> m_ui;
 	void LoadThemes();
-
-private slots:
-	void OnConfirmStopToggled(bool checked);
-	void OnUsePanicHandlersToggled(bool checked);
-	void OnOnScreenDisplayMessagesToggled(bool checked);
-	void OnPauseOnFocusLostToggled(bool checked);
-	void OnThemeIndexChanged(int index);
-	void OnLanguageIndexChanged(int index);
 };
