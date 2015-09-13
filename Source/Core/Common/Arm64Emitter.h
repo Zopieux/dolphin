@@ -172,6 +172,8 @@ enum PStateField
 	FIELD_DAIFSet,
 	FIELD_DAIFClr,
 	FIELD_NZCV,	// The only system registers accessible from EL0 (user space)
+	FIELD_PMCR_EL0,
+	FIELD_PMCCNTR_EL0,
 	FIELD_FPCR = 0x340,
 	FIELD_FPSR = 0x341,
 };
@@ -378,6 +380,7 @@ public:
 	}
 
 	void SetCodePtr(u8* ptr);
+	void SetCodePtrUnsafe(u8* ptr);
 	void ReserveCodeSpace(u32 bytes);
 	const u8* AlignCode16();
 	const u8* AlignCodePage();
@@ -559,6 +562,10 @@ public:
 	void EOR(ARM64Reg Rd, ARM64Reg Rn, u32 immr, u32 imms, bool invert = false);
 	void ORR(ARM64Reg Rd, ARM64Reg Rn, u32 immr, u32 imms, bool invert = false);
 	void TST(ARM64Reg Rn, u32 immr, u32 imms, bool invert = false);
+	void TST(ARM64Reg Rn, ARM64Reg Rm)
+	{
+		ANDS(Is64Bit(Rn) ? ZR : WZR, Rn, Rm);
+	}
 
 	// Add/subtract (immediate)
 	void ADD(ARM64Reg Rd, ARM64Reg Rn, u32 imm, bool shift = false);
@@ -808,6 +815,7 @@ public:
 	void FCVTL(u8 size, ARM64Reg Rd, ARM64Reg Rn);
 	void FCVTL2(u8 size, ARM64Reg Rd, ARM64Reg Rn);
 	void FCVTN(u8 dest_size, ARM64Reg Rd, ARM64Reg Rn);
+	void FCVTN2(u8 dest_size, ARM64Reg Rd, ARM64Reg Rn);
 	void FCVTZS(u8 size, ARM64Reg Rd, ARM64Reg Rn);
 	void FCVTZU(u8 size, ARM64Reg Rd, ARM64Reg Rn);
 	void FDIV(u8 size, ARM64Reg Rd, ARM64Reg Rn, ARM64Reg Rm);
@@ -900,6 +908,10 @@ public:
 	void FMUL(u8 size, ARM64Reg Rd, ARM64Reg Rn, ARM64Reg Rm, u8 index);
 	void FMLA(u8 esize, ARM64Reg Rd, ARM64Reg Rn, ARM64Reg Rm, u8 index);
 
+	// Modified Immediate
+	void MOVI(u8 size, ARM64Reg Rd, u64 imm, u8 shift = 0);
+	void BIC(u8 size, ARM64Reg Rd, u8 imm, u8 shift = 0);
+
 	void MOVI2F(ARM64Reg Rd, float value, ARM64Reg scratch = INVALID_REG, bool negate = false);
 	void MOVI2FDUP(ARM64Reg Rd, float value, ARM64Reg scratch = INVALID_REG);
 
@@ -937,6 +949,7 @@ private:
 	void EmitScalar3Source(bool isDouble, ARM64Reg Rd, ARM64Reg Rn, ARM64Reg Rm, ARM64Reg Ra, int opcode);
 	void EncodeLoadStorePair(u32 size, bool load, IndexType type, ARM64Reg Rt, ARM64Reg Rt2, ARM64Reg Rn, s32 imm);
 	void EncodeLoadStoreRegisterOffset(u32 size, bool load, ARM64Reg Rt, ARM64Reg Rn, ArithOption Rm);
+	void EncodeModImm(bool Q, u8 op, u8 cmode, u8 o2, ARM64Reg Rd, u8 abcdefgh);
 
 	void SSHLL(u8 src_size, ARM64Reg Rd, ARM64Reg Rn, u32 shift, bool upper);
 	void USHLL(u8 src_size, ARM64Reg Rd, ARM64Reg Rn, u32 shift, bool upper);

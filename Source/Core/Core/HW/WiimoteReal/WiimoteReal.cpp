@@ -43,7 +43,6 @@ Wiimote::Wiimote()
 	, m_channel(0)
 	, m_last_connect_request_counter(0)
 	, m_rumble_state()
-	, m_need_prepare()
 {}
 
 void Wiimote::Shutdown()
@@ -360,7 +359,7 @@ bool Wiimote::PrepareOnThread()
 
 	return (IOWrite(mode_report, sizeof(mode_report)) &&
 	        IOWrite(led_report, sizeof(led_report)) &&
-	        (SLEEP(200), IOWrite(rumble_report, sizeof(rumble_report))) &&
+	        (Common::SleepCurrentThread(200), IOWrite(rumble_report, sizeof(rumble_report))) &&
 	        IOWrite(req_status_report, sizeof(req_status_report)));
 }
 

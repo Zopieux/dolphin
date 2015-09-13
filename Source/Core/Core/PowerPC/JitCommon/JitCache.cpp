@@ -95,18 +95,6 @@ using namespace Gen;
 		return num_blocks;
 	}
 
-	bool JitBaseBlockCache::RangeIntersect(int s1, int e1, int s2, int e2) const
-	{
-		// check if any endpoint is inside the other range
-		if ((s1 >= s2 && s1 <= e2) ||
-		    (e1 >= s2 && e1 <= e2) ||
-		    (s2 >= s1 && s2 <= e1) ||
-		    (e2 >= s1 && e2 <= e1))
-			return true;
-		else
-			return false;
-	}
-
 	int JitBaseBlockCache::AllocateBlock(u32 em_address)
 	{
 		JitBlock &b = blocks[num_blocks];
@@ -324,9 +312,20 @@ using namespace Gen;
 	{
 		XEmitter emit(location);
 		if (*location == 0xE8)
+		{
 			emit.CALL(address);
+		}
 		else
-			emit.JMP(address, true);
+		{
+			// If we're going to link with the next block, there is no need
+			// to emit JMP. So just NOP out the gap to the next block.
+			// Support up to 3 additional bytes because of alignment.
+			s64 offset = address - emit.GetCodePtr();
+			if (offset > 0 && offset <= 5 + 3)
+				emit.NOP(offset);
+			else
+				emit.JMP(address, true);
+		}
 	}
 
 	void JitBlockCache::WriteDestroyBlock(const u8* location, u32 address)

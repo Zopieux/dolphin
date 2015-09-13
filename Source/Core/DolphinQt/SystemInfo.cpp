@@ -2,6 +2,7 @@
 // Licensed under GPLv2+
 // Refer to the license.txt file included.
 
+#include <memory>
 #include <QClipboard>
 #include <QPushButton>
 #include <QThread>
@@ -10,7 +11,6 @@
 
 #include "Common/Common.h"
 #include "Common/CPUDetect.h"
-#include "Common/StdMakeUnique.h"
 
 #include "DolphinQt/SystemInfo.h"
 #include "DolphinQt/Utils/Utils.h"
@@ -27,7 +27,7 @@ DSystemInfo::DSystemInfo(QWidget* parent_widget) :
 	UpdateSystemInfo();
 
 	QPushButton* btn = m_ui->buttonBox->addButton(tr("Copy"), QDialogButtonBox::ActionRole);
-	connect(btn, SIGNAL(pressed()), this, SLOT(CopyPressed()));
+	connect(btn, &QPushButton::pressed, this, &DSystemInfo::CopyPressed);
 }
 
 DSystemInfo::~DSystemInfo()
@@ -46,7 +46,7 @@ void DSystemInfo::UpdateSystemInfo()
 
 	sysinfo += SL("System\n===========================\n");
 	sysinfo += SL("OS: %1\n").arg(GetOS());
-	sysinfo += SL("CPU: %1, %2 cores\n").arg(QString::fromStdString(cpu_info.Summarize()))
+	sysinfo += SL("CPU: %1, %2 logical processors\n").arg(QString::fromStdString(cpu_info.Summarize()))
 		.arg(QThread::idealThreadCount());
 
 	sysinfo += SL("\nDolphin\n===========================\n");
@@ -70,12 +70,16 @@ QString DSystemInfo::GetOS() const
 	case QSysInfo::WV_VISTA: ret += SL("Vista"); break;
 	case QSysInfo::WV_WINDOWS7: ret += SL("7"); break;
 	case QSysInfo::WV_WINDOWS8: ret += SL("8"); break;
+	case QSysInfo::WV_WINDOWS8_1: ret += SL("8.1"); break;
+	case QSysInfo::WV_WINDOWS10: ret += SL("10"); break;
 	default: ret += SL("(unknown)"); break;
 	}
 #elif defined(Q_OS_MAC)
 	ret += SL("Mac OS X ");
 	switch (QSysInfo::MacintoshVersion) {
 	case QSysInfo::MV_10_9: ret += SL("10.9"); break;
+	case QSysInfo::MV_10_10: ret += SL("10.10"); break;
+	case QSysInfo::MV_10_11: ret += SL("10.11"); break;
 	default: ret += SL("(unknown)"); break;
 	}
 #elif defined(Q_OS_LINUX)

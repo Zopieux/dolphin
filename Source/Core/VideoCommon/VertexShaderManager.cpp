@@ -22,7 +22,7 @@
 #include "VideoCommon/VideoConfig.h"
 #include "VideoCommon/XFMemory.h"
 
-static float GC_ALIGNED16(g_fProjectionMatrix[16]);
+alignas(16) static float g_fProjectionMatrix[16];
 
 // track changes
 static bool bTexMatricesChanged[2], bPosNormalMatrixChanged, bProjectionChanged, bViewportChanged;
@@ -683,7 +683,7 @@ void VertexShaderManager::SetProjectionChanged()
 	bProjectionChanged = true;
 }
 
-void VertexShaderManager::SetMaterialColorChanged(int index, u32 color)
+void VertexShaderManager::SetMaterialColorChanged(int index)
 {
 	nMaterialsChanged[index] = true;
 }

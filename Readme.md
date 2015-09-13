@@ -1,6 +1,6 @@
 # Dolphin - A GameCube / Wii / Triforce Emulator
 
-[Homepage](https://dolphin-emu.org/) | [Project Site](https://github.com/dolphin-emu/dolphin) | [Forums](https://forums.dolphin-emu.org/) | [Wiki](https://wiki.dolphin-emu.org/) | [Issue Tracker](https://code.google.com/p/dolphin-emu/issues/list) | [Coding Style](https://github.com/dolphin-emu/dolphin/blob/master/Contributing.md) | [Transifex Page](https://www.transifex.com/projects/p/dolphin-emu/)
+[Homepage](https://dolphin-emu.org/) | [Project Site](https://github.com/dolphin-emu/dolphin) | [Forums](https://forums.dolphin-emu.org/) | [Wiki](https://wiki.dolphin-emu.org/) | [Issue Tracker](https://bugs.dolphin-emu.org/projects/emulator/issues) | [Coding Style](https://github.com/dolphin-emu/dolphin/blob/master/Contributing.md) | [Transifex Page](https://www.transifex.com/projects/p/dolphin-emu/)
 
 Dolphin is an emulator for running GameCube, Wii, and Triforce games on
 Windows, Linux, OS X, and recent Android devices. It's licensed under
@@ -35,9 +35,9 @@ Dolphin can only be installed on devices that satisfy the above requirements. At
 
 ## Building for Windows
 Use the solution file `Source/dolphin-emu.sln` to build Dolphin on Windows.
-Visual Studio 2013 is a hard requirement since previous versions don't support
-many C++ features that we use. Other compilers might be able to build Dolphin
-on Windows but have not been tested and are not recommended to be used.
+Visual Studio 2015 is a hard requirement. Other compilers might be able to
+build Dolphin on Windows but have not been tested and are not recommended to
+be used.
 
 An installer can be created by using the `Installer_win32.nsi` and
 `Installer_x64.nsi` scripts in the Installer directory. This will require the

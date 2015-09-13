@@ -4,6 +4,7 @@
 
 #include "VideoBackends/OGL/GLInterfaceBase.h"
 #include "VideoBackends/OGL/GLInterface/EGL.h"
+#include "VideoCommon/DriverDetails.h"
 #include "VideoCommon/RenderBase.h"
 
 // Show the current FPS
@@ -13,7 +14,8 @@ void cInterfaceEGL::Swap()
 }
 void cInterfaceEGL::SwapInterval(int Interval)
 {
-	eglSwapInterval(egl_dpy, Interval);
+	if (!DriverDetails::HasBug(DriverDetails::BUG_BROKENVSYNC))
+		eglSwapInterval(egl_dpy, Interval);
 }
 
 void* cInterfaceEGL::GetFuncAddress(const std::string& name)
@@ -27,7 +29,6 @@ void cInterfaceEGL::DetectMode()
 		return;
 
 	EGLint num_configs;
-	EGLConfig *config = nullptr;
 	bool supportsGL = false, supportsGLES2 = false, supportsGLES3 = false;
 	std::array<int, 3> renderable_types = {
 		EGL_OPENGL_BIT,
@@ -51,16 +52,17 @@ void cInterfaceEGL::DetectMode()
 		if (!eglChooseConfig( egl_dpy, attribs, nullptr, 0, &num_configs))
 		{
 			INFO_LOG(VIDEO, "Error: couldn't get an EGL visual config\n");
-			goto err_exit;
+			continue;
 		}
 
-		config = new EGLConfig[num_configs];
+		EGLConfig* config = new EGLConfig[num_configs];
 
 		// Get all the configurations
 		if (!eglChooseConfig(egl_dpy, attribs, config, num_configs, &num_configs))
 		{
 			INFO_LOG(VIDEO, "Error: couldn't get an EGL visual config\n");
-			goto err_exit;
+			delete[] config;
+			continue;
 		}
 
 		for (int i = 0; i < num_configs; ++i)
@@ -78,6 +80,7 @@ void cInterfaceEGL::DetectMode()
 					supportsGLES2 = true;
 			}
 		}
+		delete[] config;
 	}
 
 	if (supportsGL)
@@ -87,11 +90,8 @@ void cInterfaceEGL::DetectMode()
 	else if (supportsGLES2)
 		s_opengl_mode = GLInterfaceMode::MODE_OPENGLES2;
 
-err_exit:
 	if (s_opengl_mode == GLInterfaceMode::MODE_DETECT) // Errored before we found a mode
 		s_opengl_mode = GLInterfaceMode::MODE_OPENGL; // Fall back to OpenGL
-	if (config)
-		delete[] config;
 }
 
 // Create rendering window.
@@ -201,6 +201,12 @@ bool cInterfaceEGL::MakeCurrent()
 {
 	return eglMakeCurrent(egl_dpy, egl_surf, egl_surf, egl_ctx);
 }
+
+bool cInterfaceEGL::ClearCurrent()
+{
+	return eglMakeCurrent(egl_dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+}
+
 // Close backend
 void cInterfaceEGL::Shutdown()
 {

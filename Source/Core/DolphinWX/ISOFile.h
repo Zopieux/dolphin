@@ -42,7 +42,8 @@ public:
 	u64 GetFileSize() const {return m_FileSize;}
 	u64 GetVolumeSize() const {return m_VolumeSize;}
 	// 0 is the first disc, 1 is the second disc
-	u8 GetDiscNumber() const {return m_disc_number;}
+	u8 GetDiscNumber() const { return m_disc_number; }
+
 #if defined(HAVE_WX) && HAVE_WX
 	const wxBitmap& GetBitmap() const {return m_Bitmap;}
 #endif
@@ -80,7 +81,13 @@ private:
 	bool LoadFromCache();
 	void SaveToCache();
 
-	std::string CreateCacheFilename();
+	bool IsElfOrDol() const;
+	std::string CreateCacheFilename() const;
 
-	void ReadBanner(const DiscIO::IVolume& volume);
+	// Outputs to m_pImage
+	void ReadVolumeBanner(const DiscIO::IVolume& volume);
+	// Outputs to m_Bitmap
+	bool ReadPNGBanner(const std::string& path);
+
+	static wxBitmap ScaleBanner(wxImage* image);
 };

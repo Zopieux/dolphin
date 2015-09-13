@@ -5,7 +5,6 @@
 #include "ui_GeneralConfigPage.h"
 
 #include "Common/Common.h"
-#include "Common/StdMakeUnique.h"
 #include "Core/ConfigManager.h"
 #include "Core/Core.h"
 #include "Core/PowerPC/PowerPC.h"

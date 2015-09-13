@@ -6,6 +6,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "Common/ColorUtil.h"
@@ -20,8 +21,8 @@
 
 namespace DiscIO
 {
-CVolumeGC::CVolumeGC(IBlobReader* _pReader)
-	: m_pReader(_pReader)
+CVolumeGC::CVolumeGC(std::unique_ptr<IBlobReader> reader)
+	: m_pReader(std::move(reader))
 {}
 
 CVolumeGC::~CVolumeGC()
@@ -228,13 +229,13 @@ bool CVolumeGC::LoadBannerFile() const
 		else
 		{
 			m_banner_file_type = BANNER_INVALID;
-			WARN_LOG(DISCIO, "Invalid opening.bnr. Type: %0x Size: %0lx", bannerSignature, (unsigned long)file_size);
+			WARN_LOG(DISCIO, "Invalid opening.bnr. Type: %0x Size: %0zx", bannerSignature, file_size);
 		}
 	}
 	else
 	{
 		m_banner_file_type = BANNER_INVALID;
-		WARN_LOG(DISCIO, "Invalid opening.bnr. Size: %0lx", (unsigned long)file_size);
+		WARN_LOG(DISCIO, "Invalid opening.bnr. Size: %0zx", file_size);
 	}
 
 	return m_banner_file_type != BANNER_INVALID;
@@ -248,7 +249,7 @@ std::map<IVolume::ELanguage, std::string> CVolumeGC::ReadMultiLanguageStrings(bo
 		return strings;
 
 	u32 number_of_languages = 0;
-	ELanguage start_language;
+	ELanguage start_language = LANGUAGE_UNKNOWN;
 	bool is_japanese = GetCountry() == ECountry::COUNTRY_JAPAN;
 
 	switch (m_banner_file_type)

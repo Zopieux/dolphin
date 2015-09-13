@@ -2,23 +2,24 @@
 <ui version="4.0">
  <class>DAboutDialog</class>
  <widget class="QDialog" name="DAboutDialog">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>680</width>
-    <height>273</height>
-   </rect>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>About Dolphin</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <property name="rightMargin">
+    <number>22</number>
+   </property>
    <property name="horizontalSpacing">
     <number>18</number>
    </property>
    <property name="verticalSpacing">
-    <number>10</number>
+    <number>13</number>
    </property>
    <item row="5" column="1">
     <widget class="QLabel" name="lblLicenseAuthorsSupport">
@@ -37,7 +38,7 @@
     <widget class="QLabel" name="lblGitInfo">
      <property name="font">
       <font>
-       <pointsize>8</pointsize>
+       <pointsize>7</pointsize>
       </font>
      </property>
      <property name="text">
@@ -62,7 +63,7 @@ Compiled: %3 @ %4</string>
       </sizepolicy>
      </property>
      <property name="margin">
-      <number>10</number>
+      <number>16</number>
      </property>
     </widget>
    </item>
@@ -86,9 +87,7 @@ Compiled: %3 @ %4</string>
     <widget class="QLabel" name="lblDolphin">
      <property name="font">
       <font>
-       <pointsize>28</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
+       <pointsize>31</pointsize>
       </font>
      </property>
      <property name="text">
@@ -124,6 +123,7 @@ Compiled: %3 @ %4</string>
     <widget class="QLabel" name="lblGitRev">
      <property name="font">
       <font>
+       <pointsize>9</pointsize>
        <weight>75</weight>
        <italic>false</italic>
        <bold>true</bold>

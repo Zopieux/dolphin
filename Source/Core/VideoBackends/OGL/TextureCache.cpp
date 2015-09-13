@@ -213,7 +213,7 @@ void TextureCache::TCacheEntry::Load(unsigned int width, unsigned int height,
 	TextureCache::SetStage();
 }
 
-void TextureCache::TCacheEntry::FromRenderTarget(u32 dstAddr, unsigned int dstFormat,
+void TextureCache::TCacheEntry::FromRenderTarget(u8* dstPointer, unsigned int dstFormat, u32 dstStride,
 	PEControl::PixelFormat srcFormat, const EFBRectangle& srcRect,
 	bool isIntensity, bool scaleByHalf, unsigned int cbufid,
 	const float *colmat)
@@ -262,26 +262,20 @@ void TextureCache::TCacheEntry::FromRenderTarget(u32 dstAddr, unsigned int dstFo
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-	if (!g_ActiveConfig.bSkipEFBCopyToRam)
+	if (g_ActiveConfig.bSkipEFBCopyToRam)
 	{
-		int encoded_size = TextureConverter::EncodeToRamFromTexture(
-			dstAddr,
+		this->Zero(dstPointer);
+	}
+	else
+	{
+		TextureConverter::EncodeToRamFromTexture(
+			dstPointer,
+			this,
 			read_texture,
 			srcFormat == PEControl::Z24,
 			isIntensity,
-			dstFormat,
 			scaleByHalf,
-			srcRect,
-			copyMipMapStrideChannels * 32);
-
-		u8* dst = Memory::GetPointer(dstAddr);
-		u64 const new_hash = GetHash64(dst,encoded_size,g_ActiveConfig.iSafeTextureCache_ColorSamples);
-
-		size_in_bytes = (u32)encoded_size;
-
-		TextureCache::MakeRangeDynamic(dstAddr, encoded_size);
-
-		hash = new_hash;
+			srcRect);
 	}
 
 	FramebufferManager::SetFramebuffer(0);
@@ -362,7 +356,7 @@ void TextureCache::CompileShaders()
 		"\n"
 		"void main(){\n"
 		"	vec4 texcol = texture(samp9, vec3(f_uv0.xy, %s));\n"
-		"	int depth = clamp(int(texcol.x * 16777216.0), 0, 0xFFFFFF);\n"
+		"	int depth = int(texcol.x * 16777216.0);\n"
 
 		// Convert to Z24 format
 		"	ivec4 workspace;\n"
@@ -570,7 +564,7 @@ void TextureCache::ConvertTexture(TCacheEntryBase* _entry, TCacheEntryBase* _unc
 	memcpy(buffer.first, palette, size);
 	s_palette_stream_buffer->Unmap(size);
 	glUniform1i(s_palette_buffer_offset_uniform[format], buffer.second / 2);
-	glUniform1f(s_palette_multiplier_uniform[format], unconverted->format == 0 ? 15.0f : 255.0f);
+	glUniform1f(s_palette_multiplier_uniform[format], (unconverted->format & 0xf) == 0 ? 15.0f : 255.0f);
 	glUniform4f(s_palette_copy_position_uniform[format], 0.0f, 0.0f, (float)unconverted->config.width, (float)unconverted->config.height);
 
 	glActiveTexture(GL_TEXTURE10);

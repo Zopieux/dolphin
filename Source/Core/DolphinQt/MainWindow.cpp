@@ -2,7 +2,9 @@
 // Licensed under GPLv2+
 // Refer to the license.txt file included.
 
+#include <memory>
 #include <QActionGroup>
+#include <QCloseEvent>
 #include <QDesktopServices>
 #include <QFileDialog>
 #include <QMessageBox>
@@ -10,14 +12,13 @@
 
 #include "ui_MainWindow.h"
 
-#include "Common/StdMakeUnique.h"
-
 #include "Core/BootManager.h"
 #include "Core/ConfigManager.h"
 #include "Core/HW/ProcessorInterface.h"
 
 #include "DolphinQt/AboutDialog.h"
 #include "DolphinQt/Config/ConfigDialog.h"
+#include "DolphinQt/Host.h"
 #include "DolphinQt/MainWindow.h"
 #include "DolphinQt/SystemInfo.h"
 #include "DolphinQt/Utils/Resources.h"
@@ -56,35 +57,57 @@ DMainWindow::DMainWindow(QWidget* parent_widget)
 	OnGameListStyleChanged();
 
 	// Connect all the signals/slots
-	connect(this, SIGNAL(CoreStateChanged(Core::EState)), this, SLOT(OnCoreStateChanged(Core::EState)));
+	connect(this, &DMainWindow::CoreStateChanged, this, &DMainWindow::OnCoreStateChanged);
 
-	connect(m_ui->actionOpen, SIGNAL(triggered()), this, SLOT(OnOpen()));
-	connect(m_ui->actionOpen_tool, SIGNAL(triggered()), this, SLOT(OnOpen()));
-	connect(m_ui->actionBrowse, SIGNAL(triggered()), this, SLOT(OnBrowse()));
-	connect(m_ui->actionBrowse_tool, SIGNAL(triggered()), this, SLOT(OnBrowse()));
-	connect(m_ui->actionExit, SIGNAL(triggered()), this, SLOT(OnExit()));
+	connect(m_ui->actionOpen, &QAction::triggered, this, [&]() {
+		QString filename = ShowFileDialog();
+		if (!filename.isNull())
+			StartGame(filename);
+	});
+	connect(m_ui->actionOpen_tool, SIGNAL(triggered()), m_ui->actionOpen, SLOT(trigger()));
+	connect(m_ui->actionBrowse, &QAction::triggered, this, &DMainWindow::OnBrowse);
+	connect(m_ui->actionBrowse_tool, SIGNAL(triggered()), m_ui->actionBrowse, SLOT(trigger()));
+	connect(m_ui->actionExit, &QAction::triggered, this, [&]() {
+		close();
+	});
 
-	connect(m_ui->actionListView, SIGNAL(triggered()), this, SLOT(OnGameListStyleChanged()));
-	connect(m_ui->actionTreeView, SIGNAL(triggered()), this, SLOT(OnGameListStyleChanged()));
-	connect(m_ui->actionGridView, SIGNAL(triggered()), this, SLOT(OnGameListStyleChanged()));
-	connect(m_ui->actionIconView, SIGNAL(triggered()), this, SLOT(OnGameListStyleChanged()));
+	connect(m_ui->actionListView, &QAction::triggered, this, &DMainWindow::OnGameListStyleChanged);
+	connect(m_ui->actionTreeView, &QAction::triggered, this, &DMainWindow::OnGameListStyleChanged);
+	connect(m_ui->actionGridView, &QAction::triggered, this, &DMainWindow::OnGameListStyleChanged);
+	connect(m_ui->actionIconView, &QAction::triggered, this, &DMainWindow::OnGameListStyleChanged);
 
-	connect(m_ui->actionPlay_tool, SIGNAL(triggered()), this, SLOT(OnPlay()));
-	connect(m_ui->actionPlay, SIGNAL(triggered()), this, SLOT(OnPlay()));
-	connect(m_game_tracker, SIGNAL(StartGame()), this, SLOT(OnPlay()));
-	connect(m_ui->actionStop_tool, SIGNAL(triggered()), this, SLOT(OnStop()));
-	connect(m_ui->actionStop, SIGNAL(triggered()), this, SLOT(OnStop()));
-	connect(m_ui->actionReset, SIGNAL(triggered()), this, SLOT(OnReset()));
-
-	connect(m_ui->actionConfigure, SIGNAL(triggered()), this, SLOT(onOpenConfigure()));
-	connect(m_ui->actionConfigure_tool, SIGNAL(triggered()), this, SLOT(onOpenConfigure()));
-
-	connect(m_ui->actionWebsite, SIGNAL(triggered()), this, SLOT(OnOpenWebsite()));
-	connect(m_ui->actionOnlineDocs, SIGNAL(triggered()), this, SLOT(OnOpenDocs()));
-	connect(m_ui->actionGitHub, SIGNAL(triggered()), this, SLOT(OnOpenGitHub()));
-	connect(m_ui->actionSystemInfo, SIGNAL(triggered()), this, SLOT(OnOpenSystemInfo()));
-	connect(m_ui->actionAbout, SIGNAL(triggered()), this, SLOT(OnOpenAbout()));
-	connect(m_ui->actionAboutQt, SIGNAL(triggered()), this, SLOT(OnOpenAboutQt()));
+	connect(m_ui->actionPlay, &QAction::triggered, this, &DMainWindow::OnPlay);
+	connect(m_game_tracker, &DGameTracker::StartGame, this, &DMainWindow::OnPlay);
+	connect(m_ui->actionStop, &QAction::triggered, this, &DMainWindow::OnStop);
+	connect(m_ui->actionReset, &QAction::triggered, this, &DMainWindow::OnReset);
+	connect(m_ui->actionScreenshot, &QAction::triggered, this, []() {
+		Core::SaveScreenShot();
+	});
+	connect(m_ui->actionWebsite, &QAction::triggered, this, []() {
+		QDesktopServices::openUrl(QUrl(SL("https://dolphin-emu.org/")));
+	});
+	connect(m_ui->actionOnlineDocs, &QAction::triggered, this, []() {
+		QDesktopServices::openUrl(QUrl(SL("https://dolphin-emu.org/docs/guides/")));
+	});
+	connect(m_ui->actionGitHub, &QAction::triggered, this, []() {
+		QDesktopServices::openUrl(QUrl(SL("https://github.com/dolphin-emu/dolphin")));
+	});
+	connect(m_ui->actionSystemInfo, &QAction::triggered, this, [&]() {
+		DSystemInfo* dlg = new DSystemInfo(this);
+		dlg->open();
+	});
+	connect(m_ui->actionAbout, &QAction::triggered, this, [&]() {
+		DAboutDialog* dlg = new DAboutDialog(this);
+		dlg->open();
+	});
+	connect(m_ui->actionConfigure, &QAction::triggered, this, [&]() {
+		DConfigDialog* dlg = new DConfigDialog(this);
+		dlg->open();
+	});
+	connect(m_ui->actionConfigure_tool, SIGNAL(triggered()), m_ui->actionConfigure, SLOT(trigger()));
+	connect(m_ui->actionAboutQt, &QAction::triggered, this, [&]() {
+		QApplication::aboutQt();
+	});
 
 	// Update GUI items
 	emit CoreStateChanged(Core::CORE_UNINITIALIZED);
@@ -99,9 +122,23 @@ DMainWindow::~DMainWindow()
 {
 }
 
+bool DMainWindow::event(QEvent* e)
+{
+	if (e->type() == HostEvent::TitleEvent)
+	{
+		HostTitleEvent* htev = (HostTitleEvent*)e;
+		m_ui->statusbar->showMessage(QString::fromStdString(htev->m_title), 1500);
+		return true;
+	}
+	return QMainWindow::event(e);
+}
+
 void DMainWindow::closeEvent(QCloseEvent* ce)
 {
-	Stop();
+	if (!OnStop())
+		ce->ignore();
+	else
+		QMainWindow::closeEvent(ce);
 }
 
 // Emulation
@@ -145,16 +182,32 @@ void DMainWindow::StartGame(const QString filename)
 	}
 	else
 	{
-		// TODO: Disable screensaver!
+		DisableScreensaver();
 		emit CoreStateChanged(Core::CORE_RUN);
 	}
+}
+
+void DMainWindow::DisableScreensaver()
+{
+#ifdef Q_OS_WIN
+	// Prevents Windows from sleeping or turning off the display
+	SetThreadExecutionState(ES_CONTINUOUS | ES_DISPLAY_REQUIRED);
+#endif
+}
+
+void DMainWindow::EnableScreensaver()
+{
+#ifdef Q_OS_WIN
+	// Allows Windows to sleep and turn off the display
+	SetThreadExecutionState(ES_CONTINUOUS);
+#endif
 }
 
 QString DMainWindow::RequestBootFilename()
 {
 	// If a game is already selected, just return the filename
 	if (m_game_tracker->SelectedGame() != nullptr)
-			return m_game_tracker->SelectedGame()->GetFileName();
+		return m_game_tracker->SelectedGame()->GetFileName();
 
 	return ShowFileDialog();
 }
@@ -169,8 +222,7 @@ QString DMainWindow::ShowFileDialog()
 QString DMainWindow::ShowFolderDialog()
 {
 	return QFileDialog::getExistingDirectory(this, tr("Browse for a directory to add"),
-	                                         QDir::homePath(),
-	                                         QFileDialog::ShowDirsOnly);
+		QDir::homePath(), QFileDialog::ShowDirsOnly);
 }
 
 void DMainWindow::DoStartPause()
@@ -189,13 +241,6 @@ void DMainWindow::DoStartPause()
 		m_render_widget->setCursor(Qt::BlankCursor);
 }
 
-void DMainWindow::OnOpen()
-{
-	QString filename = ShowFileDialog();
-	if (!filename.isNull())
-		StartGame(filename);
-}
-
 void DMainWindow::OnBrowse()
 {
 	std::string path = ShowFolderDialog().toStdString();
@@ -211,14 +256,6 @@ void DMainWindow::OnBrowse()
 		}
 	}
 	m_game_tracker->ScanForGames();
-}
-
-void DMainWindow::OnExit()
-{
-	close();
-	if (Core::GetState() == Core::CORE_UNINITIALIZED || m_isStopping)
-		return;
-	Stop();
 }
 
 void DMainWindow::OnPlay()
@@ -244,9 +281,17 @@ bool DMainWindow::OnStop()
 	// Ask for confirmation in case the user accidentally clicked Stop / Escape
 	if (SConfig::GetInstance().bConfirmStop)
 	{
-		// Pause emulation
-		Core::SetState(Core::CORE_PAUSE);
-		emit CoreStateChanged(Core::CORE_PAUSE);
+		// Pause emulation if it isn't already
+		bool wasPaused = false;
+		if (Core::GetState() == Core::CORE_PAUSE)
+		{
+			wasPaused = true;
+		}
+		else
+		{
+			Core::SetState(Core::CORE_PAUSE);
+			emit CoreStateChanged(Core::CORE_PAUSE);
+		}
 
 		QMessageBox::StandardButton ret = QMessageBox::question(m_render_widget.get(), tr("Please confirm..."),
 			tr("Do you want to stop the current emulation?"),
@@ -254,7 +299,8 @@ bool DMainWindow::OnStop()
 
 		if (ret == QMessageBox::No)
 		{
-			DoStartPause();
+			if (!wasPaused)
+				DoStartPause();
 			return false;
 		}
 	}
@@ -270,8 +316,7 @@ bool DMainWindow::Stop()
 	// TODO: Show the author/description dialog here
 
 	BootManager::Stop();
-
-	// TODO: Allow screensaver again
+	EnableScreensaver();
 	// TODO: Restore original window title
 
 	// TODO:
@@ -315,21 +360,19 @@ void DMainWindow::OnCoreStateChanged(Core::EState state)
 	bool is_paused = (state == Core::CORE_PAUSE);
 
 	// Update the toolbar
-	m_ui->actionPlay_tool->setEnabled(is_not_initialized || is_running || is_paused);
+	m_ui->actionPlay->setEnabled(is_not_initialized || is_running || is_paused);
 	if (is_running)
 	{
-		m_ui->actionPlay_tool->setIcon(Resources::GetIcon(Resources::TOOLBAR_PAUSE));
-		m_ui->actionPlay_tool->setText(tr("Pause"));
+		m_ui->actionPlay->setIcon(Resources::GetIcon(Resources::TOOLBAR_PAUSE));
 		m_ui->actionPlay->setText(tr("Pause"));
 	}
 	else if (is_paused || is_not_initialized)
 	{
-		m_ui->actionPlay_tool->setIcon(Resources::GetIcon(Resources::TOOLBAR_PLAY));
-		m_ui->actionPlay_tool->setText(tr("Play"));
+		m_ui->actionPlay->setIcon(Resources::GetIcon(Resources::TOOLBAR_PLAY));
 		m_ui->actionPlay->setText(tr("Play"));
 	}
 
-	m_ui->actionStop_tool->setEnabled(!is_not_initialized);
+	m_ui->actionStop->setEnabled(!is_not_initialized);
 	m_ui->actionOpen->setEnabled(is_not_initialized);
 	m_game_tracker->setEnabled(is_not_initialized);
 }
@@ -342,44 +385,6 @@ void DMainWindow::UpdateIcons()
 	m_ui->actionBrowse_tool->setIcon(Resources::GetIcon(Resources::TOOLBAR_BROWSE));
 	m_ui->actionConfigure_tool->setIcon(Resources::GetIcon(Resources::TOOLBAR_CONFIGURE));
 	// Play/Pause is handled in OnCoreStateChanged().
-	m_ui->actionStop_tool->setIcon(Resources::GetIcon(Resources::TOOLBAR_STOP));
-}
-
-// Help menu
-void DMainWindow::OnOpenWebsite()
-{
-	QDesktopServices::openUrl(QUrl(SL("https://dolphin-emu.org/")));
-}
-
-void DMainWindow::OnOpenDocs()
-{
-	QDesktopServices::openUrl(QUrl(SL("https://dolphin-emu.org/docs/guides/")));
-}
-
-void DMainWindow::OnOpenGitHub()
-{
-	QDesktopServices::openUrl(QUrl(SL("https://github.com/dolphin-emu/dolphin")));
-}
-
-void DMainWindow::OnOpenSystemInfo()
-{
-	DSystemInfo* dlg = new DSystemInfo(this);
-	dlg->open();
-}
-
-void DMainWindow::OnOpenAbout()
-{
-	DAboutDialog* dlg = new DAboutDialog(this);
-	dlg->open();
-}
-
-void DMainWindow::OnOpenAboutQt()
-{
-	QApplication::aboutQt();
-}
-
-void DMainWindow::onOpenConfigure()
-{
-	DConfigDialog* dlg = new DConfigDialog(this);
-	dlg->open();
+	m_ui->actionStop->setIcon(Resources::GetIcon(Resources::TOOLBAR_STOP));
+	m_ui->actionScreenshot->setIcon(Resources::GetIcon(Resources::TOOLBAR_SCREENSHOT));
 }

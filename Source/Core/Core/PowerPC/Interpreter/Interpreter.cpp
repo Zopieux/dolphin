@@ -2,6 +2,7 @@
 // Licensed under GPLv2+
 // Refer to the license.txt file included.
 
+#include <assert.h>
 #include <cinttypes>
 #include <string>
 
@@ -25,12 +26,12 @@ namespace
 bool Interpreter::m_EndBlock;
 
 // function tables
-Interpreter::_interpreterInstruction Interpreter::m_opTable[64];
-Interpreter::_interpreterInstruction Interpreter::m_opTable4[1024];
-Interpreter::_interpreterInstruction Interpreter::m_opTable19[1024];
-Interpreter::_interpreterInstruction Interpreter::m_opTable31[1024];
-Interpreter::_interpreterInstruction Interpreter::m_opTable59[32];
-Interpreter::_interpreterInstruction Interpreter::m_opTable63[1024];
+Interpreter::Instruction Interpreter::m_opTable[64];
+Interpreter::Instruction Interpreter::m_opTable4[1024];
+Interpreter::Instruction Interpreter::m_opTable19[1024];
+Interpreter::Instruction Interpreter::m_opTable31[1024];
+Interpreter::Instruction Interpreter::m_opTable59[32];
+Interpreter::Instruction Interpreter::m_opTable63[1024];
 
 void Interpreter::RunTable4(UGeckoInstruction _inst)  { m_opTable4 [_inst.SUBOP10](_inst); }
 void Interpreter::RunTable19(UGeckoInstruction _inst) { m_opTable19[_inst.SUBOP10](_inst); }
@@ -294,7 +295,7 @@ void Interpreter::unknown_instruction(UGeckoInstruction _inst)
 			i + 1, rGPR[i + 1],
 			i + 2, rGPR[i + 2],
 			i + 3, rGPR[i + 3]);
-	assert(0);
+	_assert_msg_(POWERPC, 0, "\nIntCPU: Unknown instruction %08x at PC = %08x  last_PC = %08x  LR = %08x\n", _inst.hex, PC, last_pc, LR);
 }
 
 void Interpreter::ClearCache()

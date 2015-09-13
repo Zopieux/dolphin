@@ -36,13 +36,13 @@
 // need to include this before polarssl/aes.h,
 // otherwise we may not get __STDC_FORMAT_MACROS
 #include <cinttypes>
+#include <memory>
 #include <polarssl/aes.h>
 
 #include "Common/ChunkFile.h"
 #include "Common/CommonPaths.h"
 #include "Common/FileUtil.h"
 #include "Common/NandPaths.h"
-#include "Common/StdMakeUnique.h"
 #include "Common/StringUtil.h"
 #include "Core/ConfigManager.h"
 #include "Core/ec_wii.h"
@@ -336,11 +336,8 @@ IPCCommandResult CWII_IPC_HLE_Device_es::IOCtlV(u32 _CommandAddress)
 			else
 			{
 				Memory::Write_U32((u32)rNANDCOntent.GetContentSize(), _CommandAddress + 0x4);
-				INFO_LOG(WII_IPC_ES,
-					"IOCTL_ES_GETTITLECONTENTS: "
-					"Unable to open content %lu",
-					(unsigned long)rNANDCOntent.\
-						GetContentSize());
+				INFO_LOG(WII_IPC_ES, "IOCTL_ES_GETTITLECONTENTS: Unable to open content %zu",
+					rNANDCOntent.GetContentSize());
 			}
 
 			return IPC_DEFAULT_REPLY;
@@ -543,8 +540,7 @@ IPCCommandResult CWII_IPC_HLE_Device_es::IOCtlV(u32 _CommandAddress)
 
 			Memory::Write_U32((u32)m_TitleIDs.size(), Buffer.PayloadBuffer[0].m_Address);
 
-			INFO_LOG(WII_IPC_ES, "IOCTL_ES_GETTITLECNT: Number of Titles %lu",
-				(unsigned long)m_TitleIDs.size());
+			INFO_LOG(WII_IPC_ES, "IOCTL_ES_GETTITLECNT: Number of Titles %zu", m_TitleIDs.size());
 
 			Memory::Write_U32(0, _CommandAddress + 0x4);
 

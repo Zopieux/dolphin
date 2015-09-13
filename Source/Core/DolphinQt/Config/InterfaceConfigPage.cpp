@@ -10,7 +10,6 @@
 #include "Common/CommonPaths.h"
 #include "Common/FileSearch.h"
 #include "Common/FileUtil.h"
-#include "Common/StdMakeUnique.h"
 #include "Core/ConfigManager.h"
 
 #include "DolphinQt/Config/InterfaceConfigPage.h"

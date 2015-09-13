@@ -5,7 +5,6 @@
 #include "ui_ConfigDialog.h"
 
 #include "Common/Common.h"
-#include "Common/StdMakeUnique.h"
 
 #include "DolphinQt/Config/ConfigDialog.h"
 #include "DolphinQt/Config/GeneralConfigPage.h"

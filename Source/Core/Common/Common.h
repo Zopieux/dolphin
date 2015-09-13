@@ -60,26 +60,18 @@ extern const char *netplay_dolphin_ver;
 class NonCopyable
 {
 protected:
-	NonCopyable() {}
-	NonCopyable(const NonCopyable&&) {}
-	void operator=(const NonCopyable&&) {}
+	constexpr NonCopyable() = default;
+	~NonCopyable() = default;
+
 private:
-	NonCopyable(NonCopyable&);
-	NonCopyable& operator=(NonCopyable& other);
+	NonCopyable(NonCopyable&) = delete;
+	NonCopyable& operator=(NonCopyable&) = delete;
 };
 
 #if defined _WIN32
 
 // Memory leak checks
 	#define CHECK_HEAP_INTEGRITY()
-
-// Alignment
-	#define GC_ALIGNED16(x) __declspec(align(16)) x
-	#define GC_ALIGNED32(x) __declspec(align(32)) x
-	#define GC_ALIGNED64(x) __declspec(align(64)) x
-	#define GC_ALIGNED128(x) __declspec(align(128)) x
-	#define GC_ALIGNED16_DECL(x) __declspec(align(16)) x
-	#define GC_ALIGNED64_DECL(x) __declspec(align(64)) x
 
 // Since they are always around on Windows
 	#define HAVE_WX 1
@@ -107,12 +99,6 @@ private:
 #define MAX_PATH PATH_MAX
 
 #define __forceinline inline __attribute__((always_inline))
-#define GC_ALIGNED16(x) __attribute__((aligned(16))) x
-#define GC_ALIGNED32(x) __attribute__((aligned(32))) x
-#define GC_ALIGNED64(x) __attribute__((aligned(64))) x
-#define GC_ALIGNED128(x) __attribute__((aligned(128))) x
-#define GC_ALIGNED16_DECL(x) __attribute__((aligned(16))) x
-#define GC_ALIGNED64_DECL(x) __attribute__((aligned(64))) x
 #endif
 
 #ifdef _MSC_VER

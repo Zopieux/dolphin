@@ -18,7 +18,7 @@ namespace Ui
 class DMainWindow;
 }
 
-class DMainWindow : public QMainWindow
+class DMainWindow final : public QMainWindow
 {
 	Q_OBJECT
 
@@ -43,34 +43,25 @@ private slots:
 	void OnCoreStateChanged(Core::EState state);
 
 	// Main toolbar
-	void OnOpen();
 	void OnBrowse();
-	void OnExit();
 	void OnPlay();
 	void OnReset();
 
 	// View menu
 	void OnGameListStyleChanged();
 
-	// Options menu
-	void onOpenConfigure();
-
-	// Help menu
-	void OnOpenWebsite();
-	void OnOpenDocs();
-	void OnOpenGitHub();
-	void OnOpenSystemInfo();
-	void OnOpenAbout();
-	void OnOpenAboutQt();
-
 	// Misc.
 	void UpdateIcons();
 
 private:
-	void closeEvent(QCloseEvent* ce);
+	bool event(QEvent* e) override;
+	void closeEvent(QCloseEvent* ce) override;
 	std::unique_ptr<Ui::DMainWindow> m_ui;
 	DGameTracker* m_game_tracker;
 
+	// Misc.
+	void DisableScreensaver();
+	void EnableScreensaver();
 	// Emulation
 	QString RequestBootFilename();
 	QString ShowFileDialog();

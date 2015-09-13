@@ -15,8 +15,11 @@
 #include "Core/HW/GPFifo.h"
 #include "Core/HW/Memmap.h"
 #include "Core/HW/SystemTimers.h"
+#include "Core/HW/VideoInterface.h"
 #include "Core/PowerPC/PowerPC.h"
 #include "VideoCommon/BPMemory.h"
+
+bool IsPlayingBackFifologWithBrokenEFBCopies = false;
 
 FifoPlayer::~FifoPlayer()
 {
@@ -60,6 +63,9 @@ bool FifoPlayer::Play()
 	if (m_File->GetFrameCount() == 0)
 		return false;
 
+	// Currently these is no such thing as a Fifolog without broken EFB copies.
+	IsPlayingBackFifologWithBrokenEFBCopies = true;
+
 	m_CurrentFrame = m_FrameRangeStart;
 
 	LoadMemory();
@@ -98,6 +104,8 @@ bool FifoPlayer::Play()
 			}
 		}
 	}
+
+	IsPlayingBackFifologWithBrokenEFBCopies = false;
 
 	return true;
 }
@@ -169,7 +177,7 @@ FifoPlayer::FifoPlayer() :
 void FifoPlayer::WriteFrame(const FifoFrameInfo &frame, const AnalyzedFrameInfo &info)
 {
 	// Core timing information
-	m_CyclesPerFrame = SystemTimers::GetTicksPerSecond() / 60;
+	m_CyclesPerFrame = SystemTimers::GetTicksPerSecond() / VideoInterface::TargetRefreshRate;
 	m_ElapsedCycles = 0;
 	m_FrameFifoSize = frame.fifoDataSize;
 
